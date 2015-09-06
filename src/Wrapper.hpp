@@ -1,5 +1,9 @@
 #include <lua.hpp>
 #include <string>
+#include <functional>
+#include <vector>
+
+typedef std::function<void(lua_State*)> LuaFunction;
 
 class LuaWrapper {
 private:
@@ -10,6 +14,9 @@ private:
 
 	// store code of last error
 	int lastError;
+
+	// store registered functions
+	static std::vector<LuaFunction> functions;
 
 	/* Private functions */
 
@@ -35,6 +42,9 @@ private:
 	void popValue(double *value);
 	void popValue(float *value);
 	void popValue(std::string* value);
+
+	// helper function for calls from Lua into C++
+	static int callFromLua(lua_State *state);
 
 public:
 	/*
@@ -98,7 +108,7 @@ public:
 	/*
 	* Register a function in the Lua runtime.
 	*/
-	void registerFunction(std::string name, lua_CFunction function);
+	void registerFunction(std::string name, LuaFunction function);
 
 	/*
 	* Destroy the LuaWrapper.

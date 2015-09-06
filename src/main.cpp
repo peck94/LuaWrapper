@@ -2,12 +2,9 @@
 #include "Wrapper.hpp"
 using namespace std;
 
-extern "C" {
-  static int l_cppfunction(lua_State *L) {
-    double arg = luaL_checknumber(L,1);
-    lua_pushnumber(L, arg * 0.5);
-    return 1;
-  }
+void l_cppfunction(lua_State *L) {
+	double arg = luaL_checknumber(L,1);
+	lua_pushnumber(L, arg * 0.5);
 }
 
 int main() {
