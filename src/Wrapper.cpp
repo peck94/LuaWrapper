@@ -16,24 +16,33 @@ void LuaWrapper::setLastError(int newLastError) {
 	lastError = newLastError;
 }
 
-inline void LuaWrapper::pushValue(bool value) {
+inline void LuaWrapper::pushValues() {
+	return;
+}
+
+template<typename... T> void LuaWrapper::pushValues(bool value, T... rest) {
 	lua_pushboolean(getState(), value);
+	pushValues(rest...);
 }
 
-inline void LuaWrapper::pushValue(int value) {
+template<typename... T> void LuaWrapper::pushValues(int value, T... rest) {
 	lua_pushinteger(getState(), value);
+	pushValues(rest...);
 }
 
-inline void LuaWrapper::pushValue(double value) {
+template<typename... T> void LuaWrapper::pushValues(double value, T... rest) {
 	lua_pushnumber(getState(), value);
+	pushValues(rest...);
 }
 
-inline void LuaWrapper::pushValue(float value) {
+template<typename... T> void LuaWrapper::pushValues(float value, T... rest) {
 	lua_pushnumber(getState(), static_cast<float>(value));
+	pushValues(rest...);
 }
 
-inline void LuaWrapper::pushValue(string value) {
+template<typename... T> void LuaWrapper::pushValues(string value, T... rest) {
 	lua_pushstring(getState(), value.c_str());
+	pushValues(rest...);
 }
 
 inline void LuaWrapper::popValue(bool* value) {
@@ -83,7 +92,7 @@ bool LuaWrapper::loadFile(string filename) {
 
 template<typename T>
 void LuaWrapper::setGlobal(string name, T value) {
-	pushValue(value);
+	pushValues(value);
 	lua_setglobal(getState(), name.c_str());
 }
 
@@ -91,6 +100,20 @@ template<typename T>
 void LuaWrapper::getGlobal(string name, T* value) {
         lua_getglobal(getState(), name.c_str());
 	popValue(value);
+}
+
+template<typename T, typename ... Types>
+bool LuaWrapper::callFunction(string name, T* result, Types... args) {
+	int num = (result) ? 1 : 0;
+
+        lua_getglobal(getState(), name.c_str());
+	pushValues(args...);
+        setLastError(lua_pcall(getState(), sizeof...(Types), num, 0));
+        if(num > 0) {
+                popValue(result);
+        }
+
+        return getLastError() == 0;
 }
 
 LuaWrapper::~LuaWrapper() {

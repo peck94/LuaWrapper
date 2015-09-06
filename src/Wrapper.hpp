@@ -23,11 +23,12 @@ private:
 	void setLastError(int newLastError);
 
 	// helper functions for pushing and popping values to/from the Lua stack
-	void pushValue(bool value);
-	void pushValue(int value);
-	void pushValue(double value);
-	void pushValue(float value);
-	void pushValue(std::string value);
+	void pushValues();
+	template<typename... T>	void pushValues(bool value, T... rest);
+	template<typename... T> void pushValues(int value, T... rest);
+	template<typename... T> void pushValues(double value, T... rest);
+	template<typename... T> void pushValues(float value, T... rest);
+	template<typename... T> void pushValues(std::string value, T... rest);
 
 	void popValue(bool *value);
 	void popValue(int *value);
@@ -63,6 +64,12 @@ public:
 	*/
 	template<typename T>
 	void getGlobal(std::string name, T* value);
+
+	/*
+	* Call into a Lua function.
+	*/
+	template<typename T, typename... Types>
+	bool callFunction(std::string name, T* result, Types... args);
 
 	/*
 	* Destroy the LuaWrapper.
