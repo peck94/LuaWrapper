@@ -1,10 +1,13 @@
 #include <iostream>
 #include "Wrapper.hpp"
+#include "Interface.hpp"
 using namespace std;
 
-void l_cppfunction(lua_State *L) {
-	double arg = luaL_checknumber(L,1);
-	lua_pushnumber(L, arg * 0.5);
+void l_cppfunction(LuaInterface *li) {
+	double arg;
+	li->get(1, &arg);
+
+	li->put(arg * 0.5);
 }
 
 int main() {
