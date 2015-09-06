@@ -1,7 +1,7 @@
 #include "Wrapper.hpp"
 using namespace std;
 
-std::vector<LuaFunction> LuaWrapper::functions;
+std::vector<FunctionRecord*> LuaWrapper::functions;
 
 /*
 * Private functions
@@ -74,7 +74,10 @@ inline void LuaWrapper::popValue(string* value) {
 
 int LuaWrapper::callFromLua(lua_State *state) {
 	int index = lua_tointeger(state, lua_upvalueindex(1));
-	LuaWrapper::functions[index](state);
+	FunctionRecord *record = LuaWrapper::functions[index];
+	LuaInterface *interface = new LuaInterface(record->wrapper);
+	record->function(interface);
+	delete interface;
 
 	return 1;
 }
@@ -125,7 +128,8 @@ void LuaWrapper::getGlobal(string name, T* value) {
 }
 
 void LuaWrapper::registerFunction(string name, LuaFunction function) {
-	LuaWrapper::functions.push_back(function);
+	FunctionRecord *record = new FunctionRecord{this, function};
+	LuaWrapper::functions.push_back(record);
 
 	lua_pushnumber(getState(), functions.size()-1);
 	lua_pushcclosure(getState(), &LuaWrapper::callFromLua, 1);

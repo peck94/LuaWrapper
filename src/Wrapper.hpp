@@ -1,12 +1,25 @@
+#ifndef LUA_WRAPPER
+#define LUA_WRAPPER
+
 #include <lua.hpp>
 #include <string>
 #include <functional>
 #include <vector>
+#include "Interface.hpp"
 
-typedef std::function<void(lua_State*)> LuaFunction;
+class LuaWrapper;
+
+typedef std::function<void(LuaInterface*)> LuaFunction;
+
+struct FunctionRecord {
+	LuaWrapper *wrapper;
+	LuaFunction function;
+};
 
 class LuaWrapper {
 private:
+	friend class LuaInterface;
+
 	/* Members */
 
 	// store Lua state
@@ -16,7 +29,7 @@ private:
 	int lastError;
 
 	// store registered functions
-	static std::vector<LuaFunction> functions;
+	static std::vector<FunctionRecord*> functions;
 
 	/* Private functions */
 
@@ -116,3 +129,5 @@ public:
 	*/
 	~LuaWrapper();
 };
+
+#endif
