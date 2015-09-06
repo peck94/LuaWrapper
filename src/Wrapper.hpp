@@ -34,6 +34,7 @@ struct FunctionRecord {
 
 class LuaWrapper {
 private:
+	// this friend may access our private members
 	friend class LuaInterface;
 
 	/* Members */

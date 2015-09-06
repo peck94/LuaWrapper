@@ -73,10 +73,15 @@ inline void LuaWrapper::popValue(string* value) {
 }
 
 int LuaWrapper::callFromLua(lua_State *state) {
+	// get index into function store
 	int index = lua_tointeger(state, lua_upvalueindex(1));
+	// retrieve the record
 	FunctionRecord *record = LuaWrapper::functions[index];
+	// decorate the wrapper with a LuaInterface
 	LuaInterface *interface = new LuaInterface(record->wrapper);
+	// call the function
 	record->function(interface);
+	// clean-up
 	delete interface;
 
 	return 1;
@@ -128,16 +133,28 @@ void LuaWrapper::getGlobal(string name, T* value) {
 }
 
 void LuaWrapper::registerFunction(string name, LuaFunction function) {
+	// create a function record of this wrapper instance and the given function
 	FunctionRecord *record = new FunctionRecord{this, function};
 	LuaWrapper::functions.push_back(record);
 
+	// store the index in the upvalues
 	lua_pushnumber(getState(), functions.size()-1);
+	// associate with callFromLua but under the given name
 	lua_pushcclosure(getState(), &LuaWrapper::callFromLua, 1);
 	lua_setglobal(getState(), name.c_str());
 }
 
 LuaWrapper::~LuaWrapper() {
 	lua_close(getState());
+	/*
+	* We do not delete the FunctionRecord* elements in the function store.
+	* This is because, due to its static nature, this LuaWrapper may not be
+	* the only one and the function store thus might contain records of other
+	* instances. Deleting everything here would lead to random, hard-to-debug
+	* crashes when using multiple LuaWrapper instances.
+	* No worries: the OS will free up all that memory once the program exits,
+	* when we can be sure all LuaWrapper instances should be gone.
+	*/
 }
 
 /*
