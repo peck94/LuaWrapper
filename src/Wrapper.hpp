@@ -50,8 +50,21 @@ public:
 
 	/*
 	* Load a Lua script file into the Lua state.
+	* Note: this does NOT run the file, so any symbols such as functions
+	* defined in the given script will NOT be loaded into the runtime.
+	* Use runFile for that.
 	*/
 	bool loadFile(std::string filename);
+
+	/*
+	* Run a previously loaded file.
+	*/
+	bool runFile();
+
+	/*
+	* Load and run a file.
+	*/
+	bool runFile(std::string filename);
 
 	/*
 	* Set a global variable in the Lua state.

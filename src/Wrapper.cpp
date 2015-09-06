@@ -90,6 +90,19 @@ bool LuaWrapper::loadFile(string filename) {
 	return getLastError() == 0;
 }
 
+bool LuaWrapper::runFile() {
+	setLastError(lua_pcall(getState(), 0, LUA_MULTRET, 0));
+	return getLastError() == 0;
+}
+
+bool LuaWrapper::runFile(string name) {
+	if(loadFile(name)) {
+		return runFile();
+	}
+
+	return false;
+}
+
 template<typename T>
 void LuaWrapper::setGlobal(string name, T value) {
 	pushValues(value);
