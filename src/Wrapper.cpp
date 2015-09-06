@@ -102,20 +102,6 @@ void LuaWrapper::getGlobal(string name, T* value) {
 	popValue(value);
 }
 
-template<typename T, typename ... Types>
-bool LuaWrapper::callFunction(string name, T* result, Types... args) {
-	int num = (result) ? 1 : 0;
-
-        lua_getglobal(getState(), name.c_str());
-	pushValues(args...);
-        setLastError(lua_pcall(getState(), sizeof...(Types), num, 0));
-        if(num > 0) {
-                popValue(result);
-        }
-
-        return getLastError() == 0;
-}
-
 LuaWrapper::~LuaWrapper() {
 	lua_close(getState());
 }

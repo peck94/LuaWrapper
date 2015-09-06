@@ -69,7 +69,18 @@ public:
 	* Call into a Lua function.
 	*/
 	template<typename T, typename... Types>
-	bool callFunction(std::string name, T* result, Types... args);
+	bool callFunction(std::string name, T* result, Types... args) {
+        	int num = (result) ? 1 : 0;
+
+        	lua_getglobal(getState(), name.c_str());
+        	pushValues(args...);
+        	setLastError(lua_pcall(getState(), sizeof...(Types), num, 0));
+        	if(result) {
+        	        popValue(result);
+	       	}
+
+	        return getLastError() == 0;
+	}
 
 	/*
 	* Destroy the LuaWrapper.
