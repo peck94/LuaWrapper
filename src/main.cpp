@@ -32,6 +32,13 @@ int main() {
 	lw->setGlobal("var3", var3);
 	lw->setGlobal("var4", var4);
 	lw->setGlobal("var5", var5);
+	lw->setGlobal("cppvar", 5);
+
+	cout << "Run file" << endl;
+	if(!lw->runFile()) {
+		cerr << "Error: " << lw->getLastError() << endl;
+		goto cleanup;
+	}
 
 	cout << "Read global vars" << endl;
 	lw->getGlobal("var1", &var1);
