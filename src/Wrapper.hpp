@@ -7,10 +7,26 @@
 #include <vector>
 #include "Interface.hpp"
 
+// forward declaration will be needed
 class LuaWrapper;
 
+/*
+* LuaFunction is the type that functions you pass from C++ into Lua
+* will have. They return nothing and accept a single argument, namely
+* a LuaInterface*, which is a decorator around the LuaWrapper instance
+* they were registered from. LuaInterface provides two helper functions,
+* get and put, which your functions will need to use in order to get their
+* arguments from the stack and return values.
+*/
 typedef std::function<void(LuaInterface*)> LuaFunction;
 
+/*
+* A FunctionRecord keeps track of which registered functions have which
+* LuaWrapper instance associated with them. This is an important piece
+* of bookkeeping when handling multiple LuaWrapper instances, since due
+* to technical reasons the functions will be stored in a static member
+* variable.
+*/
 struct FunctionRecord {
 	LuaWrapper *wrapper;
 	LuaFunction function;
