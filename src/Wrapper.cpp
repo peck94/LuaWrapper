@@ -115,6 +115,11 @@ void LuaWrapper::getGlobal(string name, T* value) {
 	popValue(value);
 }
 
+void LuaWrapper::registerFunction(string name, lua_CFunction function) {
+	lua_pushcfunction(getState(), function);
+	lua_setglobal(getState(), name.c_str());
+}
+
 LuaWrapper::~LuaWrapper() {
 	lua_close(getState());
 }

@@ -96,6 +96,11 @@ public:
 	}
 
 	/*
+	* Register a function in the Lua runtime.
+	*/
+	void registerFunction(std::string name, lua_CFunction function);
+
+	/*
 	* Destroy the LuaWrapper.
 	* Cleans up the Lua state.
 	*/

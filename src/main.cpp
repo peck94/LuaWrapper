@@ -2,6 +2,14 @@
 #include "Wrapper.hpp"
 using namespace std;
 
+extern "C" {
+  static int l_cppfunction(lua_State *L) {
+    double arg = luaL_checknumber(L,1);
+    lua_pushnumber(L, arg * 0.5);
+    return 1;
+  }
+}
+
 int main() {
 	cout << "Test Lua embedding" << endl;
 	bool var1;
@@ -54,6 +62,11 @@ int main() {
 
 	cout << "Calling a Lua function from C++" << endl;
 	lw->callFunction("myluafunction", &ret, 5);
+	cout << "Result: " << ret << endl;
+
+	cout << "Calling a C++ function from Lua" << endl;
+	lw->registerFunction("cppfunction", l_cppfunction);
+	lw->callFunction("myfunction", &ret, 5);
 	cout << "Result: " << ret << endl;
 
 cleanup:
