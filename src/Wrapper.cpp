@@ -81,10 +81,13 @@ int LuaWrapper::callFromLua(lua_State *state) {
 	LuaInterface *interface = new LuaInterface(record->wrapper);
 	// call the function
 	record->function(interface);
+	// get the number of results
+	int numResults = interface->getReturnSize();
 	// clean-up
 	delete interface;
 
-	return 1;
+	// we need this to balance the stack
+	return numResults;
 }
 
 /*

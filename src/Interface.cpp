@@ -35,20 +35,29 @@ void LuaInterface::get(int index, string *value) {
 
 void LuaInterface::put(bool value) {
 	lua_pushboolean(wrapper->getState(), value);
+	returnValues++;
 }
 
 void LuaInterface::put(int value) {
 	lua_pushinteger(wrapper->getState(), value);
+	returnValues++;
 }
 
 void LuaInterface::put(double value) {
 	lua_pushnumber(wrapper->getState(), value);
+	returnValues++;
 }
 
 void LuaInterface::put(float value) {
 	put(static_cast<double>(value));
+	returnValues++;
 }
 
 void LuaInterface::put(string value) {
 	lua_pushstring(wrapper->getState(), value.c_str());
+	returnValues++;
+}
+
+int LuaInterface::getReturnSize() {
+	return returnValues;
 }

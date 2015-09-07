@@ -8,7 +8,10 @@ class LuaWrapper;
 
 class LuaInterface {
 private:
+	// store wrapper instance
 	LuaWrapper *wrapper;
+	// store number of return arguments
+	int returnValues = 0;
 
 public:
 	/*
@@ -38,6 +41,11 @@ public:
 	void put(double value);
 	void put(float value);
 	void put(std::string value);
+
+	/*
+	* Retrieve the number of return values.
+	*/
+	int getReturnSize();
 };
 
 #endif
