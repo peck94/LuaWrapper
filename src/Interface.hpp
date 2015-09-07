@@ -1,6 +1,7 @@
 #ifndef LUA_INTERFACE
 #define LUA_INTERFACE
 
+#include "Wrapper.hpp"
 #include <lua.hpp>
 #include <string>
 
@@ -36,11 +37,8 @@ public:
 	/*
 	* Push a value to the stack.
 	*/
-	void put(bool value);
-	void put(int value);
-	void put(double value);
-	void put(float value);
-	void put(std::string value);
+	template<typename... Types>
+	void put(Types... values);
 
 	/*
 	* Retrieve the number of return values.

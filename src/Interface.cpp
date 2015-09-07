@@ -11,18 +11,34 @@ LuaWrapper* LuaInterface::getWrapper() {
 }
 
 void LuaInterface::get(int index, bool *value) {
+	if(!lua_isboolean(wrapper->getState(), index)) {
+		throw lw_type_error("bool");
+	}
+
 	*value = lua_toboolean(wrapper->getState(), index);
 }
 
 void LuaInterface::get(int index, int *value) {
+	if(!lua_isinteger(wrapper->getState(), index)) {
+		throw lw_type_error("int");
+	}
+
 	*value = lua_tointeger(wrapper->getState(), index);
 }
 
 void LuaInterface::get(int index, double *value) {
+	if(!lua_isnumber(wrapper->getState(), index)) {
+		throw lw_type_error("double");
+	}
+
 	*value = lua_tonumber(wrapper->getState(), index);
 }
 
 void LuaInterface::get(int index, float *value) {
+	if(!lua_isnumber(wrapper->getState(), index)) {
+		throw lw_type_error("float");
+	}
+
 	double result;
 	get(index, &result);
 
@@ -30,34 +46,28 @@ void LuaInterface::get(int index, float *value) {
 }
 
 void LuaInterface::get(int index, string *value) {
+	if(!lua_isstring(wrapper->getState(), index)) {
+		throw lw_type_error("string");
+	}
+
 	*value = string{lua_tostring(wrapper->getState(), index)};
 }
 
-void LuaInterface::put(bool value) {
-	lua_pushboolean(wrapper->getState(), value);
-	returnValues++;
-}
-
-void LuaInterface::put(int value) {
-	lua_pushinteger(wrapper->getState(), value);
-	returnValues++;
-}
-
-void LuaInterface::put(double value) {
-	lua_pushnumber(wrapper->getState(), value);
-	returnValues++;
-}
-
-void LuaInterface::put(float value) {
-	put(static_cast<double>(value));
-	returnValues++;
-}
-
-void LuaInterface::put(string value) {
-	lua_pushstring(wrapper->getState(), value.c_str());
-	returnValues++;
+template<typename... Types>
+void LuaInterface::put(Types... values) {
+	wrapper->pushValues(values...);
+	returnValues+= sizeof...(Types);
 }
 
 int LuaInterface::getReturnSize() {
 	return returnValues;
 }
+
+/*
+* Template instantiations
+*/
+template void LuaInterface::put(bool);
+template void LuaInterface::put(int);
+template void LuaInterface::put(double);
+template void LuaInterface::put(float);
+template void LuaInterface::put(string);
