@@ -6,6 +6,7 @@
 #include <functional>
 #include <vector>
 #include "Interface.hpp"
+#include "Exceptions.hpp"
 
 // forward declaration will be needed
 class LuaWrapper;
@@ -120,19 +121,39 @@ public:
 
 	/*
 	* Call into a Lua function.
+	* We expect one return value.
 	*/
 	template<typename T, typename... Types>
 	bool callFunction(std::string name, T* result, Types... args) {
-        	int num = (result) ? 1 : 0;
-
         	lua_getglobal(getState(), name.c_str());
+		if(!lua_isfunction(getState(), 1)) {
+			lua_pop(getState(), 1);
+			throw lw_name_error(name);
+		}
+
         	pushValues(args...);
-        	setLastError(lua_pcall(getState(), sizeof...(Types), num, 0));
-        	if(result) {
-        	        popValue(result);
-	       	}
+        	setLastError(lua_pcall(getState(), sizeof...(Types), 1, 0));
+      	        popValue(result);
 
 	        return getLastError() == 0;
+	}
+
+	/*
+	* Call into a Lua function.
+	* This call expects no return values.
+	*/
+	template<typename... Types>
+	bool callVoidFunction(std::string name, Types... args) {
+		lua_getglobal(getState(), name.c_str());
+                if(!lua_isfunction(getState(), 1)) {
+                        lua_pop(getState(), 1);
+                        throw lw_name_error(name);
+                }
+
+                pushValues(args...);
+                setLastError(lua_pcall(getState(), sizeof...(Types), 0, 0));
+
+                return getLastError() == 0;
 	}
 
 	/*

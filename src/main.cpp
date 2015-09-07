@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Wrapper.hpp"
 #include "Interface.hpp"
+#include "Exceptions.hpp"
 using namespace std;
 
 void l_cppfunction(LuaInterface *li) {
@@ -71,6 +72,20 @@ int main() {
 	lw->registerFunction("cppfunction", l_cppfunction);
 	lw->callFunction("myfunction", &ret, 5);
 	cout << "Result: " << ret << endl;
+
+	cout << "Getting wrong types should fail" << endl;
+	try{
+		lw->getGlobal("var5", &var3);
+	}catch(lw_type_error e) {
+		cout << "And it did: " << e.what() << endl;
+	}
+
+	cout << "Calling undefined functions should fail" << endl;
+	try{
+		lw->callVoidFunction("undefined_function");
+	}catch(lw_name_error e) {
+		cout << "And it did: " << e.what() << endl;
+	}
 
 cleanup:
 	cout << "Clean-up" << endl;
