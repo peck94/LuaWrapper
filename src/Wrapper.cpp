@@ -1,4 +1,5 @@
 #include "Wrapper.hpp"
+#include "Exceptions.hpp"
 using namespace std;
 
 std::vector<FunctionRecord*> LuaWrapper::functions;
@@ -48,26 +49,46 @@ template<typename... T> void LuaWrapper::pushValues(string value, T... rest) {
 }
 
 inline void LuaWrapper::popValue(bool* value) {
+	if(!lua_isboolean(getState(), -1)) {
+		throw lw_type_error("bool");
+	}
+
 	*value = lua_toboolean(getState(), -1);
 	lua_pop(getState(), 1);
 }
 
 inline void LuaWrapper::popValue(int* value) {
+	if(!lua_isinteger(getState(), -1)) {
+		throw lw_type_error("int");
+	}
+
 	*value = lua_tointeger(getState(), -1);
 	lua_pop(getState(), 1);
 }
 
 inline void LuaWrapper::popValue(double* value) {
+	if(!lua_isnumber(getState(), -1)) {
+		throw lw_type_error("double");
+	}
+
 	*value = lua_tonumber(getState(), -1);
 	lua_pop(getState(), 1);
 }
 
 inline void LuaWrapper::popValue(float* value) {
+	if(!lua_isnumber(getState(), -1)) {
+		throw lw_type_error("float");
+	}
+
 	*value = static_cast<float>(lua_tonumber(getState(), -1));
 	lua_pop(getState(), 1);
 }
 
 inline void LuaWrapper::popValue(string* value) {
+	if(!lua_isstring(getState(), -1)) {
+		throw lw_type_error("string");
+	}
+
 	*value = string{lua_tostring(getState(), -1)};
 	lua_pop(getState(), 1);
 }

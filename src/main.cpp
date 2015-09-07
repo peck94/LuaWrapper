@@ -18,6 +18,7 @@ int main() {
 	float var4;
 	string var5;
 	string ret;
+	double luavar;
 
 	cout << "Init Lua" << endl;
 	LuaWrapper *lw = new LuaWrapper();
@@ -59,6 +60,8 @@ int main() {
 	cout << "var4 = " << var4 << endl;
         lw->getGlobal("var5", &var5);
 	cout << "var5 = " << var5 << endl;
+	lw->getGlobal("luavar", &luavar);
+	cout << "luavar = " << luavar << endl;
 
 	cout << "Calling a Lua function from C++" << endl;
 	lw->callFunction("myluafunction", &ret, 5);
