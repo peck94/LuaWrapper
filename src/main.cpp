@@ -26,6 +26,21 @@ void cppfunction3(LuaInterface *li) {
 	cout << "Input: " << arg << endl;
 }
 
+void cppfunction4(LuaInterface *li) {
+	cout << "Void function without arguments" << endl;
+}
+
+void cppfunction5(LuaInterface *li) {
+	cout << "Non-void function without arguments" << endl;
+	li->put(1337);
+}
+
+void cppfunction6(LuaInterface *li) {
+	while(true) {
+		li->put(1);
+	}
+}
+
 int main() {
 	cout << "Test Lua embedding" << endl;
 	bool var1;
@@ -87,12 +102,25 @@ int main() {
 	lw->registerFunction("cppfunction", cppfunction1);
 	lw->registerFunction("cppfunction2", cppfunction2);
 	lw->registerFunction("cppfunction3", cppfunction3);
+	lw->registerFunction("cppfunction4", cppfunction4);
+	lw->registerFunction("cppfunction5", cppfunction5);
+	lw->registerFunction("cppfunction6", cppfunction6);
 
 	lw->callFunction("myfunction", &ret, 5);
 	cout << "Result: " << ret << endl;
 	lw->callFunction("cppfunction2", &ret, 3, 9);
 	cout << "Result: " << ret << endl;
 	lw->callVoidFunction("cppfunction3", string{"swag"});
+	lw->callVoidFunction("cppfunction4");
+	lw->callFunction("cppfunction5", &ret);
+	cout << "Result: " << ret << endl;
+
+	cout << "Smashing the stack for fun and profit" << endl;
+	try{
+		lw->callVoidFunction("cppfunction6");
+	}catch(lw_stack_overflow e) {
+		cout << e.what() << endl;
+	}
 
 	cout << "Getting wrong types should fail" << endl;
 	try{
