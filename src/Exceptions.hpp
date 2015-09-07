@@ -1,6 +1,11 @@
-#include <exception>
+#include <string>
 
-class lw_type_error: public runtime_error {
+class lw_error {
+public:
+	virtual std::string what() = 0;
+};
+
+class lw_type_error: public lw_error {
 private:
 	std::string name;
 
@@ -9,7 +14,7 @@ public:
 		this->name = name;
 	}
 
-	virtual const char* what() const throw() {
-		return "Type error: data was not of type " + name;
+	virtual std::string what() {
+		return std::string{"Type error: data was not of type " + name};
 	}
 };
