@@ -19,6 +19,13 @@ void cppfunction2(LuaInterface *li) {
 	li->put(arg1 + arg2);
 }
 
+void cppfunction3(LuaInterface *li) {
+	string arg;
+	li->get(1, &arg);
+
+	cout << "Input: " << arg << endl;
+}
+
 int main() {
 	cout << "Test Lua embedding" << endl;
 	bool var1;
@@ -79,11 +86,13 @@ int main() {
 	cout << "Calling a C++ function from Lua" << endl;
 	lw->registerFunction("cppfunction", cppfunction1);
 	lw->registerFunction("cppfunction2", cppfunction2);
+	lw->registerFunction("cppfunction3", cppfunction3);
 
 	lw->callFunction("myfunction", &ret, 5);
 	cout << "Result: " << ret << endl;
 	lw->callFunction("cppfunction2", &ret, 3, 9);
 	cout << "Result: " << ret << endl;
+	lw->callVoidFunction("cppfunction3", string{"swag"});
 
 	cout << "Getting wrong types should fail" << endl;
 	try{
