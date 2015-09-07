@@ -36,4 +36,11 @@ public:
         }
 };
 
+class lw_stack_overflow: public lw_error {
+public:
+	virtual std::string what() {
+		return std::string("The program attempted to overflow the stack");
+	}
+};
+
 #endif
