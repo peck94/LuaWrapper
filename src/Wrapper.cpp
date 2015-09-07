@@ -19,55 +19,6 @@ void LuaWrapper::setLastError(int newLastError) {
 	lastError = newLastError;
 }
 
-inline void LuaWrapper::pushValues() {
-	return;
-}
-
-template<typename... T> void LuaWrapper::pushValues(bool value, T... rest) {
-	if(!lua_checkstack(getState(), 1)) {
-		throw lw_stack_overflow();
-	}
-
-	lua_pushboolean(getState(), value);
-	pushValues(rest...);
-}
-
-template<typename... T> void LuaWrapper::pushValues(int value, T... rest) {
-	if(!lua_checkstack(getState(), 1)) {
-                throw lw_stack_overflow();
-        }
-
-	lua_pushinteger(getState(), value);
-	pushValues(rest...);
-}
-
-template<typename... T> void LuaWrapper::pushValues(double value, T... rest) {
-	if(!lua_checkstack(getState(), 1)) {
-                throw lw_stack_overflow();
-        }
-
-	lua_pushnumber(getState(), value);
-	pushValues(rest...);
-}
-
-template<typename... T> void LuaWrapper::pushValues(float value, T... rest) {
-        if(!lua_checkstack(getState(), 1)) {
-                throw lw_stack_overflow();
-        }
-
-	lua_pushnumber(getState(), static_cast<float>(value));
-	pushValues(rest...);
-}
-
-template<typename... T> void LuaWrapper::pushValues(string value, T... rest) {
-        if(!lua_checkstack(getState(), 1)) {
-                throw lw_stack_overflow();
-        }
-
-	lua_pushstring(getState(), value.c_str());
-	pushValues(rest...);
-}
-
 inline void LuaWrapper::popValue(bool* value) {
 	if(!lua_isboolean(getState(), -1)) {
 		throw lw_type_error("bool");

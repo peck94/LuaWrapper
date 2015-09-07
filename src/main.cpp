@@ -4,11 +4,19 @@
 #include "Exceptions.hpp"
 using namespace std;
 
-void l_cppfunction(LuaInterface *li) {
+void cppfunction1(LuaInterface *li) {
 	double arg;
 	li->get(1, &arg);
 
 	li->put(arg * 0.5);
+}
+
+void cppfunction2(LuaInterface *li) {
+	int arg1, arg2;
+	li->get(1, &arg1);
+	li->get(2, &arg2);
+
+	li->put(arg1 + arg2);
 }
 
 int main() {
@@ -69,8 +77,12 @@ int main() {
 	cout << "Result: " << ret << endl;
 
 	cout << "Calling a C++ function from Lua" << endl;
-	lw->registerFunction("cppfunction", l_cppfunction);
+	lw->registerFunction("cppfunction", cppfunction1);
+	lw->registerFunction("cppfunction2", cppfunction2);
+
 	lw->callFunction("myfunction", &ret, 5);
+	cout << "Result: " << ret << endl;
+	lw->callFunction("cppfunction2", &ret, 3, 9);
 	cout << "Result: " << ret << endl;
 
 	cout << "Getting wrong types should fail" << endl;

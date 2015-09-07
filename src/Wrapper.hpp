@@ -61,12 +61,54 @@ private:
 	void setLastError(int newLastError);
 
 	// helper functions for pushing and popping values to/from the Lua stack
-	void pushValues();
-	template<typename... T>	void pushValues(bool value, T... rest);
-	template<typename... T> void pushValues(int value, T... rest);
-	template<typename... T> void pushValues(double value, T... rest);
-	template<typename... T> void pushValues(float value, T... rest);
-	template<typename... T> void pushValues(std::string value, T... rest);
+	void pushValues() {
+		return;
+	}
+
+	template<typename... T>	void pushValues(bool value, T... rest) {
+       		if(!lua_checkstack(getState(), 1)) {
+                	throw lw_stack_overflow();
+        	}
+
+        	lua_pushboolean(getState(), value);
+        	pushValues(rest...);
+	}
+
+	template<typename... T> void pushValues(int value, T... rest) {
+        	if(!lua_checkstack(getState(), 1)) {
+                	throw lw_stack_overflow();
+        	}
+
+        	lua_pushinteger(getState(), value);
+        	pushValues(rest...);
+	}
+
+	template<typename... T> void pushValues(double value, T... rest) {
+        	if(!lua_checkstack(getState(), 1)) {
+                	throw lw_stack_overflow();
+        	}
+
+        	lua_pushnumber(getState(), value);
+	        pushValues(rest...);
+	}
+
+	template<typename... T> void pushValues(float value, T... rest) {
+        	if(!lua_checkstack(getState(), 1)) {
+                	throw lw_stack_overflow();
+        	}
+
+        	lua_pushnumber(getState(), static_cast<float>(value));
+        	pushValues(rest...);
+	}
+
+	template<typename... T> void pushValues(std::string value, T... rest) {
+        	if(!lua_checkstack(getState(), 1)) {
+                	throw lw_stack_overflow();
+        	}
+
+        	lua_pushstring(getState(), value.c_str());
+        	pushValues(rest...);
+	}
 
 	void popValue(bool *value);
 	void popValue(int *value);
